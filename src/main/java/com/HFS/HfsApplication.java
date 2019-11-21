@@ -1,5 +1,9 @@
 package com.HFS;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+
 import org.h2.server.web.WebServlet;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -33,15 +37,17 @@ public class HfsApplication {
 	@Bean
     public CommandLineRunner initData(InstituteRepository repository) {
         return (args) -> {
-            repository.save(new Institute("주택도시기금","molit"));
-            repository.save(new Institute("국민은행","bnk3726"));
-            repository.save(new Institute("우리은행","bnk1829"));
-            repository.save(new Institute("신한은행","bnk2758"));
-            repository.save(new Institute("한국시티은행","bnk7097"));
-            repository.save(new Institute("하나은행","bnk4887"));
-            repository.save(new Institute("농협은행","bnk8621"));
-            repository.save(new Institute("외환은행","bnk9166"));
-            repository.save(new Institute("기타은행","others"));
+    		BufferedReader br = null;
+    		String line;
+    		String csvSplitBy = ",";
+        	br = new BufferedReader(new InputStreamReader(new FileInputStream("src\\main\\resources\\data.csv"),"UTF-8"));
+			
+			line = br.readLine();
+			String[] field = line.split(csvSplitBy);
+			for (int j = 2; j < field.length; j++) {
+				// 0, 1  은 year, month
+				repository.save(new Institute(field[j].replaceAll("\\(억원\\)", "")));
+			}
         };
     }
 

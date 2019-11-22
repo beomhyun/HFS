@@ -4,9 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -43,7 +42,8 @@ public class BankController {
 			while((line = br.readLine()) != null) {
 				String[] field =line.split(csvSplitBy);
 				for (int j = 0; j < banklist.size(); j++) {
-					bankrepository.save(new Bank(field[0], field[1],banklist.get(j).getcode(), Integer.parseInt(field[j+2])));
+					//numberformatexception이 발생(""5") 하여  "를 제거
+					bankrepository.save(new Bank(field[0], field[1],banklist.get(j).getcode(), Integer.parseInt(field[j+2].replaceAll("\"", ""))));
 				}
 			}
 		} catch (Exception e) {
@@ -60,7 +60,63 @@ public class BankController {
 			list.add(tmp.getname());
 		}
 		JSONObject data = new JSONObject();
-		data.put("주택금융 공급 금융기관",list);
+		data.put("BankList",list);
 		return data;
 	}
+	
+	//년도별 각 금융기관의 지원금액 합계를 출력
+		@RequestMapping(method = RequestMethod.GET, value ="/amounts/banks/years")
+		@ResponseBody
+		public JSONObject getYearlyAmounts(){
+			JSONObject data = new JSONObject();
+			JSONArray list = new JSONArray();
+			List<JSONObject> years = bankrepository.getYearlyTotalAmounts();
+			for (int i = 0; i < years.size(); i++) {
+				JSONObject obj = years.get(i);
+				String year = obj.get("YEAR").toString();
+				System.out.println(bankrepository.getYearlyDetailAmounts(year));
+				List<JSONObject> detailamounts = bankrepository.getYearlyDetailAmounts(year);
+				List<JSONObject> addbanks = new ArrayList<JSONObject>();
+				JSONObject detail_amount = new JSONObject();
+				for (int j = 0; j < detailamounts.size(); j++) {
+					JSONObject da = detailamounts.get(j);
+					detail_amount.put(da.get("BANK"), da.get("AMOUNT"));
+				}
+				obj.put("detail_amount", detail_amount);
+				list.add(obj);
+			}
+			data.put("YealyStatus", list);
+			data.put("name", "주택금융 공급현황");
+			return data;
+		}
+		
+		//년도별 각 금융기관의 지원금액 합계를 출력
+		@RequestMapping(method = RequestMethod.GET, value ="/bank/yealymaxamount")
+		@ResponseBody
+		public JSONObject getYearyMaxAmountBank(){
+			JSONObject data = new JSONObject();
+			JSONObject maxbank = bankrepository.getmaxamountyear();
+			data.put("year",maxbank.get("YEAR"));
+			data.put("bank",maxbank.get("BANK"));
+			return data;
+		}
+		
+		//전체 년도(2005~2016)에서 외환은행의 지원금액 평균 중에서 가장 작은 금액과 큰 금액을 출력
+		@RequestMapping(method = RequestMethod.GET, value ="/bank/maxminyear")
+		@ResponseBody
+		public JSONObject get(){
+			JSONObject data = new JSONObject();
+			String searchBankName = "외환은행";
+			JSONObject bankcode = bankrepository.getInstituteCode(searchBankName);
+			int code = Integer.parseInt(bankcode.get("INSTITUTE_CODE").toString());
+			System.out.println(code);
+			JSONArray list = new  JSONArray();
+			JSONObject maxyear = bankrepository.getMaxAmountYearBybankcode(code);
+			list.add(maxyear);
+			JSONObject minyear = bankrepository.getMinAmountYearBybankcode(code);
+			list.add(minyear);
+			data.put("bank", searchBankName);
+			data.put("support_amount", list);
+			return data;
+		}
 }

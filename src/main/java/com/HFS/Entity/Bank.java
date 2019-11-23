@@ -12,16 +12,16 @@ public class Bank {
 	private int id;
 	private String year;
 	private String month;
-	private long institute_code;
+	private String institute_code;
 	private long amount;
 	
 	public Bank() {
 	}
 	
-	public Bank(String year, String month, long institute_code, long amount) {
+	public Bank(String year, String month, String institutd_code, long amount) {
 		this.year = year;
 		this.month = month;
-		this.institute_code = institute_code;
+		this.institute_code = institutd_code;
 		this.amount = amount;
 	}
 }

@@ -24,15 +24,16 @@ public class JwtInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
+		System.out.println("interceptor call");
         final String token = request.getHeader(HEADER_AUTH);
         JSONObject data = new JSONObject();
         if(token.equals("Bearer Token")) {
-        	User user = userrepository.findbyUserID(request.getHeader("userId"));
+        	User user = userrepository.findbyUserID(request.getHeader("ID"));
         	JSONObject tmp = new JSONObject();
-        	tmp.put("USERID", user.getUserID());
+        	tmp.put("ID", user.getID());
         	String newtoken = jwtService.makeJwt(tmp, true);
         	user.setToken(newtoken);
-        	userrepository.deleteById(user.getUserID());
+        	userrepository.deleteById(user.getID());
         	userrepository.save(user);
         	data.put("refreshToken",newtoken);
         	//represh token을 재 발행 했으나 보내주는 방법을 찾지 못함.

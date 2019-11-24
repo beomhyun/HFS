@@ -7,30 +7,30 @@ import javax.persistence.Id;
 public class User {
 	
 	@Id
-	private String UserID;
+	private String ID;
 	
 	private String PW;
 	private String token;
 	public User() {
 	}
 	
-	public User(String userID, String pW, String token) {
+	public User(String ID, String pW, String token) {
 		super();
-		this.UserID = userID;
+		this.ID = ID;
 		this.PW = pW;
 		this.token = token;
 	}
 	public User(String ID, String PW) {
-		this.UserID = ID;
+		this.ID = ID;
 		this.PW = PW;
 	}
 
-	public String getUserID() {
-		return UserID;
+	public String getID() {
+		return ID;
 	}
 
-	public void setUserID(String userID) {
-		UserID = userID;
+	public void setID(String ID) {
+		this.ID = ID;
 	}
 
 	public String getPW() {
@@ -38,7 +38,7 @@ public class User {
 	}
 
 	public void setPW(String pW) {
-		PW = pW;
+		this.PW = pW;
 	}
 
 	public String getToken() {

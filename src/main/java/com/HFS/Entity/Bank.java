@@ -24,4 +24,11 @@ public class Bank {
 		this.institute_code = institutd_code;
 		this.amount = amount;
 	}
+
+	@Override
+	public String toString() {
+		return "Bank [id=" + id + ", year=" + year + ", month=" + month + ", institute_code=" + institute_code
+				+ ", amount=" + amount + "]";
+	}
+	
 }

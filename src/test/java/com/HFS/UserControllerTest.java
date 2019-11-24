@@ -1,4 +1,4 @@
-package com.HFS.Controller;
+package com.HFS;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -6,28 +6,33 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.json.simple.JSONObject;
+import org.junit.FixMethodOrder;
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import com.HFS.Entity.User;
 import com.HFS.Common.JWT.JwtService;
+import com.HFS.Entity.User;
 import com.HFS.Repository.UserRepository;
 
-@Controller
-public class UserController {
+@RunWith(JUnit4.class)
+@SpringBootTest
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class UserControllerTest {
 	@Autowired
 	private UserRepository userrepository;
 	@Autowired
-	private JwtService jwtService;
+	private JwtService jwtservice;
 	
-	//singup 계정생성 api
-	@RequestMapping(method = RequestMethod.POST, value ="/public/user")
-	@ResponseBody
-	public JSONObject signup(@RequestBody JSONObject user) {
+	@Test
+	public void test01signup() {
+		System.out.println("SIGNUP 테스트");
+		JSONObject user = new JSONObject();
+		user.put("ID", "beomhyun");
+		user.put("PW","1234");
 		JSONObject data = new JSONObject();
 		String pw = user.get("PW").toString();
 		
@@ -42,21 +47,27 @@ public class UserController {
 		}
 		String token = null;
 		try {
-			token = jwtService.makeJwt(user,true);
-			System.out.println(token);
+			token = jwtservice.makeJwt(user,true);
+			data.put("status", "sucess");
 		} catch (Exception e) {
 			e.printStackTrace();
+			data.put("status", "fail");
+			data.put("error", e);
 		}
 		
 		User signupuser = new User(user.get("ID").toString(),pw,token);
 		userrepository.save(signupuser);
 		data.put("refreshToken", token);
-		return data;
+		
+		System.out.println(data);
 	}
-	//signin 로그인 api
-	@RequestMapping(method = RequestMethod.GET, value ="/public/signin")
-	@ResponseBody
-	public JSONObject signin(@RequestBody JSONObject user) {
+	
+	@Test
+	public void test02signin() {
+		System.out.println("SIGNIN 테스트");
+		JSONObject user = new JSONObject();
+		user.put("ID", "beomhyun");
+		user.put("PW","1234");
 		String pw = user.get("PW").toString();
 		MessageDigest digest;
 		try {
@@ -72,15 +83,15 @@ public class UserController {
 		String token = null;
 		if(Integer.parseInt(logincheck.get("ISLOGIN").toString()) == 1) {
 			try {
-				token = jwtService.makeJwt(user, false);
+				token = jwtservice.makeJwt(user, false);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			data.put("accessToken", token);
-			return data;
+			System.out.println(data);
 		}else {
 			data.put("status", "fail");
-			return data;
+			System.out.println(data);
 		}
 	}
 }

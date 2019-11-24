@@ -23,4 +23,10 @@ public class Institute {
 	public String getname() {
 		return this.institute_name;
 	}
+
+	@Override
+	public String toString() {
+		return "Institute [institute_name=" + institute_name + ", institute_code=" + institute_code + "]";
+	}
+	
 }

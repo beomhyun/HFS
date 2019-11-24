@@ -24,8 +24,10 @@ import com.HFS.Repository.InstituteRepository;
 
 @Controller
 public class BankController {
-	@Autowired BankRepository bankrepository;
-	@Autowired InstituteRepository instituterepository;
+	@Autowired 
+	private BankRepository bankrepository;
+	@Autowired 
+	private InstituteRepository instituterepository;
 	
 	//csv파일의 데이터를 읽어 데이터베이스(h2)에 저장
 	@RequestMapping(method = RequestMethod.GET, value ="/public/loadData")
@@ -80,7 +82,7 @@ public class BankController {
 			for (int i = 0; i < years.size(); i++) {
 				JSONObject obj = years.get(i);
 				String year = obj.get("YEAR").toString();
-				System.out.println(bankrepository.getYearlyDetailAmounts(year));
+//				System.out.println(bankrepository.getYearlyDetailAmounts(year));
 				List<JSONObject> detailamounts = bankrepository.getYearlyDetailAmounts(year);
 				List<JSONObject> addbanks = new ArrayList<JSONObject>();
 				JSONObject detail_amount = new JSONObject();
@@ -96,7 +98,7 @@ public class BankController {
 			return data;
 		}
 		
-		//년도별 각 금융기관의 지원금액 합계를 출력
+		//각 년도별 각 기관의 전체 지원금액 중에서 가장 큰 금액의 기관명을 출력
 		@RequestMapping(method = RequestMethod.GET, value ="/bank/yealymaxamount")
 		@ResponseBody
 		public JSONObject getYearyMaxAmountBank(){
@@ -114,7 +116,7 @@ public class BankController {
 			JSONObject data = new JSONObject();
 			String searchBankName = "외환은행";
 			JSONObject bankcode = bankrepository.getInstituteCode(searchBankName);
-			int code = Integer.parseInt(bankcode.get("INSTITUTE_CODE").toString());
+			String code = bankcode.get("INSTITUTE_CODE").toString();
 			JSONArray list = new  JSONArray();
 			JSONObject maxyear = bankrepository.getMaxAmountYearBybankcode(code);
 			list.add(maxyear);

@@ -22,11 +22,11 @@ public interface BankRepository extends JpaRepository<Bank, String> {
 	@Query(nativeQuery = true, value = "SELECT * FROM INSTITUTE WHERE INSTITUTE_NAME LIKE :bank")
 	JSONObject getInstituteCode(@Param("bank") String bank);
 	
-	@Query(nativeQuery = true, value = "SELECT B.YEAR, AVG(B.AMOUNT) AS AMOUNT FROM BANK AS  B WHERE B.INSTITUTE_CODE = :bank_code GROUP BY B.YEAR ORDER BY AVG(B.AMOUNT) DESC LIMIT 0,1")
-	JSONObject getMaxAmountYearBybankcode(@Param("bank_code") int bank_code);
+	@Query(nativeQuery = true, value = "SELECT B.YEAR, AVG(B.AMOUNT) AS AMOUNT FROM BANK AS  B WHERE B.INSTITUTE_CODE LIKE :bank_code GROUP BY B.YEAR ORDER BY AVG(B.AMOUNT) DESC LIMIT 0,1")
+	JSONObject getMaxAmountYearBybankcode(@Param("bank_code") String bank_code);
 
-	@Query(nativeQuery = true, value = "SELECT B.YEAR, AVG(B.AMOUNT) AS AMOUNT FROM BANK AS  B WHERE B.INSTITUTE_CODE = :bank_code GROUP BY B.YEAR ORDER BY AVG(B.AMOUNT) LIMIT 0,1")
-	JSONObject getMinAmountYearBybankcode(@Param("bank_code") int bank_code);
+	@Query(nativeQuery = true, value = "SELECT B.YEAR, AVG(B.AMOUNT) AS AMOUNT FROM BANK AS  B WHERE B.INSTITUTE_CODE LIKE :bank_code GROUP BY B.YEAR ORDER BY AVG(B.AMOUNT) LIMIT 0,1")
+	JSONObject getMinAmountYearBybankcode(@Param("bank_code") String bank_code);
 	
 	@Query(nativeQuery = true, value = "SELECT B.YEAR,B.MONTH, B.AMOUNT, I.INSTITUTE_CODE AS BANK FROM BANK AS B LEFT OUTER JOIN INSTITUTE AS I ON B.INSTITUTE_CODE = I.INSTITUTE_CODE WHERE I.INSTITUTE_NAME LIKE :bank_name")
 	List<JSONObject> getAmountByBankName(@Param("bank_name") String bank_name);

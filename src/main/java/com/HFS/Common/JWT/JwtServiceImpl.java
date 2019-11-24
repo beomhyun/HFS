@@ -42,7 +42,7 @@ public class JwtServiceImpl implements JwtService {
 
         Map<String, Object> map= new HashMap<String, Object>();
 
-        String userid = user.get("USERID").toString();
+        String userid = user.get("ID").toString();
 
         map.put("UserID", userid);
 
